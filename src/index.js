@@ -1,4 +1,5 @@
 /* @flow */
+import './globals';
 import { render, renderToJSON } from './render';
 import Platform from './Platform';
 import StyleSheet from './stylesheet';

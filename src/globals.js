@@ -1,0 +1,9 @@
+global.NSFontWeightUltraLight = -0.8;
+global.NSFontWeightThin = -0.6;
+global.NSFontWeightLight = -0.4;
+global.NSFontWeightRegular = 0;
+global.NSFontWeightMedium = 0.2;
+global.NSFontWeightSemibold = 0.3;
+global.NSFontWeightBold = 0.4;
+global.NSFontWeightHeavy = 0.5;
+global.NSFontWeightBlack = 0.6;
