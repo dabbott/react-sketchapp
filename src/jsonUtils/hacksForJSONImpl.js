@@ -3,9 +3,12 @@
 import type { SJTextStyle } from 'sketchapp-json-flow-types';
 import { TextAlignment } from 'sketch-constants';
 import { toSJSON } from 'sketchapp-json-plugin';
+import $ from 'nodobjc';
 import findFont from '../utils/findFont';
 import type { TextStyle } from '../types';
 import { generateID, makeColorFromCSS } from './models';
+
+$.framework('Foundation');
 
 export const TEXT_ALIGN = {
   auto: TextAlignment.Left,
@@ -97,41 +100,60 @@ export const makeImageDataFromUrl = (url: string): MSImageData => {
 
 // This shouldn't need to call into Sketch, but it does currently, which is bad for perf :(
 export function makeAttributedString(string: ?string, textStyle: TextStyle) {
-  const font = findFont(textStyle);
+  // const font = findFont(textStyle);
 
-  const color = makeColorFromCSS(textStyle.color || 'black');
+  // const color = makeColorFromCSS(textStyle.color || 'black');
 
-  const attribs: Object = {
-    MSAttributedStringFontAttribute: font.fontDescriptor(),
-    NSParagraphStyle: makeParagraphStyle(textStyle),
-    NSColor: NSColor.colorWithDeviceRed_green_blue_alpha(
-      color.red,
-      color.green,
-      color.blue,
-      color.alpha
-    ),
-    NSUnderline: TEXT_DECORATION_UNDERLINE[textStyle.textDecoration] || 0,
-    NSStrikethrough: TEXT_DECORATION_LINETHROUGH[textStyle.textDecoration] || 0,
+  // const attribs: Object = {
+  //   MSAttributedStringFontAttribute: font.fontDescriptor(),
+  //   NSParagraphStyle: makeParagraphStyle(textStyle),
+  //   NSColor: NSColor.colorWithDeviceRed_green_blue_alpha(
+  //     color.red,
+  //     color.green,
+  //     color.blue,
+  //     color.alpha
+  //   ),
+  //   NSUnderline: TEXT_DECORATION_UNDERLINE[textStyle.textDecoration] || 0,
+  //   NSStrikethrough: TEXT_DECORATION_LINETHROUGH[textStyle.textDecoration] || 0,
+  // };
+
+  // if (textStyle.letterSpacing !== undefined) {
+  //   attribs.NSKern = textStyle.letterSpacing;
+  // }
+
+  // if (textStyle.textTransform !== undefined) {
+  //   attribs.MSAttributedStringTextTransformAttribute =
+  //     TEXT_TRANSFORM[textStyle.textTransform] * 1;
+  // }
+
+  const nsString = $.NSString('stringWithUTF8String', string);
+
+  const attribStr = $.NSAttributedString('alloc')('initWithString', nsString);
+
+  const archive = $.NSKeyedArchiver('archivedDataWithRootObject', attribStr)(
+    'base64Encoding'
+  );
+
+  const msAttribStr = {
+    _class: 'MSAttributedString',
+    archivedAttributedString: {
+      _archive: archive('UTF8String'),
+    },
   };
 
-  if (textStyle.letterSpacing !== undefined) {
-    attribs.NSKern = textStyle.letterSpacing;
-  }
+  console.log('msAttrib', msAttribStr);
 
-  if (textStyle.textTransform !== undefined) {
-    attribs.MSAttributedStringTextTransformAttribute =
-      TEXT_TRANSFORM[textStyle.textTransform] * 1;
-  }
+  return msAttribStr;
 
-  const attribStr = NSAttributedString.attributedStringWithString_attributes_(
-    string,
-    attribs
-  );
-  const msAttribStr = MSAttributedString.alloc().initWithAttributedString(
-    attribStr
-  );
+  // const attribStr = NSAttributedString.attributedStringWithString_attributes_(
+  //   string,
+  //   attribs
+  // );
+  // const msAttribStr = MSAttributedString.alloc().initWithAttributedString(
+  //   attribStr
+  // );
 
-  return encodeSketchJSON(msAttribStr);
+  // return encodeSketchJSON(msAttribStr);
 }
 
 export function makeTextStyle(textStyle: TextStyle) {
