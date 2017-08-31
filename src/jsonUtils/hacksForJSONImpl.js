@@ -103,7 +103,7 @@ export const makeImageDataFromUrl = (url: string): MSImageData => {
 export function makeAttributedString(string: ?string, textStyle: TextStyle) {
   // const font = findFont(textStyle);
 
-  // const color = makeColorFromCSS(textStyle.color || 'black');
+  const color = makeColorFromCSS(textStyle.color || 'black');
 
   // const attribs: Object = {
   //   MSAttributedStringFontAttribute: font.fontDescriptor(),
@@ -128,10 +128,24 @@ export function makeAttributedString(string: ?string, textStyle: TextStyle) {
   // }
 
   const NSFontAttributeName = $.NSString('stringWithUTF8String', 'NSFont');
-  // const NSForegroundColorAttributeName = $.NSString('stringWithUTF8String', 'NSColor');
+  const NSForegroundColorAttributeName = $.NSString(
+    'stringWithUTF8String',
+    'NSColor'
+  );
   const attributes = $.NSMutableDictionary('alloc')('init');
   const font = $.NSFont('systemFontOfSize', textStyle.fontSize || 14.0);
+  const nsColor = $.NSColor(
+    'colorWithDeviceRed',
+    color.red,
+    'green',
+    color.green,
+    'blue',
+    color.blue,
+    'alpha',
+    color.alpha
+  );
   attributes('setValue', font, 'forKey', NSFontAttributeName);
+  attributes('setValue', nsColor, 'forKey', NSForegroundColorAttributeName);
 
   const nsString = $.NSString('stringWithUTF8String', string);
 
