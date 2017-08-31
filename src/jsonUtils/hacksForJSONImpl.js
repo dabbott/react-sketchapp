@@ -9,6 +9,7 @@ import type { TextStyle } from '../types';
 import { generateID, makeColorFromCSS } from './models';
 
 $.framework('Foundation');
+$.framework('AppKit');
 
 export const TEXT_ALIGN = {
   auto: TextAlignment.Left,
@@ -126,9 +127,20 @@ export function makeAttributedString(string: ?string, textStyle: TextStyle) {
   //     TEXT_TRANSFORM[textStyle.textTransform] * 1;
   // }
 
+  const NSFontAttributeName = $.NSString('stringWithUTF8String', 'NSFont');
+  // const NSForegroundColorAttributeName = $.NSString('stringWithUTF8String', 'NSColor');
+  const attributes = $.NSMutableDictionary('alloc')('init');
+  const font = $.NSFont('systemFontOfSize', textStyle.fontSize || 14.0);
+  attributes('setValue', font, 'forKey', NSFontAttributeName);
+
   const nsString = $.NSString('stringWithUTF8String', string);
 
-  const attribStr = $.NSAttributedString('alloc')('initWithString', nsString);
+  const attribStr = $.NSAttributedString('alloc')(
+    'initWithString',
+    nsString,
+    'attributes',
+    attributes
+  );
 
   const archive = $.NSKeyedArchiver('archivedDataWithRootObject', attribStr)(
     'base64Encoding'
