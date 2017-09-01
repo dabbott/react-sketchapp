@@ -103,6 +103,15 @@ export const makeImageDataFromUrl = (url: string): MSImageData => {
 export function makeAttributedString(string: ?string, textStyle: TextStyle) {
   // const font = findFont(textStyle);
 
+  if (textStyle.attributedString) {
+    return {
+      _class: 'MSAttributedString',
+      archivedAttributedString: {
+        _archive: textStyle.attributedString,
+      },
+    };
+  }
+
   const color = makeColorFromCSS(textStyle.color || 'black');
 
   // const attribs: Object = {
