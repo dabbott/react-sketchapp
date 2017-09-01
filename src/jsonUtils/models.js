@@ -73,8 +73,14 @@ export const makeColorFill = (cssColor: Color): SJFill => ({
   patternTileScale: 1,
 });
 
+// type SJImageFileReference = {|
+//   _class: "MSJSONFileReference",
+//   _ref: string,
+//   _ref_class: "MSImageData"
+// |};
+
 export const makeImageFill = (
-  image: SJImageDataReference,
+  image: any, // | SJImageFileReference,
   patternFillType: 0 | 1 | 2 | 3 = 1
 ): SJFill => ({
   _class: 'fill',
