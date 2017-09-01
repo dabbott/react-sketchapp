@@ -133,7 +133,20 @@ export function makeAttributedString(string: ?string, textStyle: TextStyle) {
     'NSColor'
   );
   const attributes = $.NSMutableDictionary('alloc')('init');
-  const font = $.NSFont('systemFontOfSize', textStyle.fontSize || 14.0);
+
+  const fontSize = textStyle.fontSize || 12.0;
+
+  const getFont = (fontFamily) => {
+    if (fontFamily) {
+      const lookup = $.NSFont('fontWithName', $(fontFamily), 'size', fontSize);
+
+      if (lookup) return lookup;
+    }
+
+    return $.NSFont('systemFontOfSize', fontSize);
+  };
+
+  const font = getFont(textStyle.fontFamily);
   const nsColor = $.NSColor(
     'colorWithDeviceRed',
     color.red,
@@ -167,7 +180,7 @@ export function makeAttributedString(string: ?string, textStyle: TextStyle) {
     },
   };
 
-  console.log('msAttrib', msAttribStr);
+  console.log('msAttrib', font);
 
   return msAttribStr;
 
