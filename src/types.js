@@ -160,6 +160,7 @@ export type TextStyle = {
 };
 
 export type TreeNode = {
+  _class: ?string,
   type: string,
   style: ViewStyle,
   textStyle: TextStyle,
